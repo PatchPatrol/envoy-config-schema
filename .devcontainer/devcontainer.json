@@ -1,0 +1,20 @@
+// .devcontainer/devcontainer.json
+{
+  "name": "Envoy Config Schema Dev Container",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "golang.go",
+        "zxh404.vscode-proto3",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  },
+  "forwardPorts": [],
+  "postCreateCommand": "make install-deps && make generate-json-schema",
+  "remoteUser": "root"
+}
