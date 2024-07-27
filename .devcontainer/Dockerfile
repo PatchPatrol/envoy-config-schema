@@ -27,5 +27,11 @@ RUN mkdir -p ~/.ssh && \
 # Set up the environment
 ENV PATH="/go/bin:/usr/local/go/bin:${PATH}"
 
+# Setting the path is broken for some reason so we're going to do it dynamically at runtime
+# by specifying an entrypoint that sets the path, and does some other configuration
+
+COPY .devcontainer/entrypoint.dev.sh /usr/local/bin/entrypoint.dev.sh
+RUN chmod +x /usr/local/bin/entrypoint.dev.sh
+ENTRYPOINT ["/usr/local/bin/entrypoint.dev.sh"]
 # Command to run when starting the container
 CMD ["/bin/bash"]
