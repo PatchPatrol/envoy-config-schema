@@ -1,22 +1,67 @@
-# Envoy config schema
+# Envoy Config Schema
+> Maintained by [Patch Patrol](https://github.com/Patch-Patrol)
 
-This repository generates JSON schemas from the envoy proto configurations. This is useful to do validations on config for example on IDE or pin pointing errors in the config in the jsonschema fashion.
+This repository provides JSON schemas for [Envoy Proxy](https://www.envoyproxy.io/) configuration files, enabling easier debugging and validation of `config.yaml` definitions.
 
-**Check the [releases page](https://github.com/jcchavezs/envoy-config-schema/releases) to the schemas per envoy's version**
+## Overview
 
-## Versioning
+Envoy Proxy is a powerful and flexible edge and service proxy.
+However, configuring it correctly can be challenging.
 
-This repo should follow the same versioning as the envoyproxy/envoy repository and also dependencies should follow the same versions as in https://github.com/envoyproxy/envoy/blob/v1.21.0/api/bazel/repository_locations.bzl
+This project aims to simplify that process by providing JSON schemas that can be used for:
 
-## Examples
+- IDE-based validation and autocompletion
+- Pinpointing errors in configurations
+- Ensuring consistency across Envoy setups
 
-Generated files can be now used to validate schema on IDEs like vscode (using extensions like https://github.com/redhat-developer/vscode-yaml)
+## Features
+
+- JSON schemas generated from Envoy's proto configurations
+- Versioned releases matching Envoy Proxy versions
+- Easy integration with popular IDEs and validation tools
+
+## Usage
+
+### IDE Integration (VSCode Example)
+
+1. Install the [YAML extension](https://github.com/redhat-developer/vscode-yaml) for VSCode.
+2. Add the following to your VSCode settings:
 
 ```json
 {
-    //...
     "yaml.schemas": {
-        "https://github.com/jcchavezs/envoy-config-schema/releases/download/v1.21.0/v3_Bootstrap.json": "envoy-config.yaml"
+        "https://github.com/Patch-Patrol/envoy-config-schema/releases/download/v[VERSION]/v3_Bootstrap.json": "envoy-config.yaml"
     }
 }
 ```
+
+Replace `[VERSION]` with the desired Envoy version (e.g., `v1.21.0`).
+
+### Command-line Validation
+
+You can use tools like `jsonschema` to validate your Envoy configurations:
+
+```bash
+jsonschema -i your-config.yaml v3_Bootstrap.json
+```
+
+## Versioning
+
+This repository follows the same versioning as the `envoyproxy/envoy` repository. Dependencies are aligned with those specified in [Envoy's repository_locations.bzl](https://github.com/envoyproxy/envoy/blob/main/api/bazel/repository_locations.bzl).
+
+## Contributing
+
+We welcome contributions! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- Original work by [José Carlos Chávez](https://github.com/jcchavezs)
+- [Envoy Proxy team](https://github.com/envoyproxy) for their excellent documentation and source code
+
+---
+
+For more information, bug reports, or feature requests, please [open an issue](https://github.com/Patch-Patrol/envoy-config-schema/issues).
