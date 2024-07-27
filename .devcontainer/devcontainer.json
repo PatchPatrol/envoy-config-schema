@@ -1,10 +1,19 @@
-// .devcontainer/devcontainer.json
 {
   "name": "Envoy Config Schema Dev Container",
   "build": {
     "dockerfile": "Dockerfile",
-    "context": ".."
+    "context": "..",
+    "args": {
+      "SSH_AUTH_SOCK": "/ssh-agent"
+    }
   },
+  "runArgs": [
+    "--volume=${env:SSH_AUTH_SOCK}:/ssh-agent",
+    "--env=SSH_AUTH_SOCK=/ssh-agent"
+  ],
+  "forwardPorts": [],
+  "postCreateCommand": "git config --global --add safe.directory /workspaces/envoy-config-schema && make install-deps && make generate-json-schema",
+  "remoteUser": "root",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -14,7 +23,10 @@
       ]
     }
   },
-  "forwardPorts": [],
-  "postCreateCommand": "make install-deps && make generate-json-schema",
-  "remoteUser": "root"
+  "remoteEnv": {
+    "SSH_AUTH_SOCK": "/ssh-agent"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {}
+  }
 }
