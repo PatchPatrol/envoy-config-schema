@@ -25,7 +25,7 @@ RUN mkdir -p ~/.ssh && \
     ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 # Set up the environment
-ENV PATH="/go/bin:${PATH}"
+ENV PATH="/go/bin:/usr/local/go/bin:${PATH}"
 
 # Command to run when starting the container
 CMD ["/bin/bash"]
