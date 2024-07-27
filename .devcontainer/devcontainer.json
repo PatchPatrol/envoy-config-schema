@@ -2,13 +2,9 @@
   "name": "Envoy Config Schema Dev Container",
   "build": {
     "dockerfile": "Dockerfile",
-    "context": "..",
-    "args": {
-      "SSH_AUTH_SOCK": "/ssh-agent"
-    }
+    "context": ".."
   },
   "runArgs": [
-    "--volume=${env:SSH_AUTH_SOCK}:/ssh-agent",
     "--env=SSH_AUTH_SOCK=/ssh-agent"
   ],
   "forwardPorts": [],
@@ -26,6 +22,9 @@
   "remoteEnv": {
     "SSH_AUTH_SOCK": "/ssh-agent"
   },
+  "mounts": [
+    "source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent,type=bind,consistency=cached"
+  ],
   "features": {
     "ghcr.io/devcontainers/features/git:1": {}
   }
