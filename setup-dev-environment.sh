@@ -1,35 +1,14 @@
 #!/bin/bash
 set -e
 
-# MOTD Banner
-echo "Welcome to the Envoy Config Schema Dev Container!"
-echo "================================================"
-echo
-
-# Ensure correct ownership and Git safe directory
-sudo chown developer:developer /workspaces/envoy-config-schema
-git config --global --add safe.directory /workspaces/envoy-config-schema
-
-# Check SSH agent forwarding
-if [ -n "$SSH_AUTH_SOCK" ]; then
-    echo "SSH agent forwarding is enabled."
-    # Verify if the socket actually exists
-    if [ -e "$SSH_AUTH_SOCK" ]; then
-        echo "SSH_AUTH_SOCK is valid."
-        # Try to list keys to verify forwarding is working
-        if ssh-add -l &>/dev/null; then
-            echo "SSH agent forwarding is working correctly."
-        else
-            echo "WARNING: SSH agent forwarding is enabled, but no identities are available."
-        fi
-    else
-        echo "WARNING: SSH_AUTH_SOCK is set but the socket file does not exist."
-    fi
+# Check if we're in a dev container environment
+if [ -d "/workspaces/envoy-config-schema" ]; then
+    # Ensure correct ownership and Git safe directory
+    sudo chown developer:developer /workspaces/envoy-config-schema
+    git config --global --add safe.directory /workspaces/envoy-config-schema
 else
-    echo "WARNING: SSH agent forwarding is not enabled. You may have issues with Git operations."
+    echo "Not running in a standard dev container environment. Skipping workspace setup."
 fi
-
-echo
 
 # Function to extract GitHub username
 get_github_username() {
@@ -42,39 +21,60 @@ get_github_username() {
     fi
 }
 
-# Get GitHub username
-GITHUB_USERNAME=$(get_github_username)
+# Check SSH agent forwarding
+if [ -n "$SSH_AUTH_SOCK" ]; then
+    echo "SSH agent forwarding is enabled."
+    if [ -e "$SSH_AUTH_SOCK" ]; then
+        echo "SSH_AUTH_SOCK is valid."
+        if ssh-add -l &>/dev/null; then
+            echo "SSH agent forwarding is working correctly."
 
-if [ -n "$GITHUB_USERNAME" ]; then
-    echo "Detected GitHub username: $GITHUB_USERNAME"
+            # Get GitHub username
+            GITHUB_USERNAME=$(get_github_username)
 
-    # Set Git config if not already set
-    if [ -z "$(git config --global user.name)" ]; then
-        git config --global user.name "$GITHUB_USERNAME"
-        echo "Set Git user.name to $GITHUB_USERNAME"
-    fi
+            if [ -n "$GITHUB_USERNAME" ]; then
+                echo "Detected GitHub username: $GITHUB_USERNAME"
 
-    if [ -z "$(git config --global user.email)" ]; then
-        git config --global user.email "$GITHUB_USERNAME@users.noreply.github.com"
-        echo "Set Git user.email to $GITHUB_USERNAME@users.noreply.github.com"
+                # Set Git config if not already set
+                if [ -z "$(git config --global user.name)" ]; then
+                    git config --global user.name "$GITHUB_USERNAME"
+                    echo "Set Git user.name to $GITHUB_USERNAME"
+                fi
+
+                if [ -z "$(git config --global user.email)" ]; then
+                    git config --global user.email "$GITHUB_USERNAME@users.noreply.github.com"
+                    echo "Set Git user.email to $GITHUB_USERNAME@users.noreply.github.com"
+                fi
+            else
+                echo "Could not detect GitHub username. Please set Git user.name and user.email manually."
+            fi
+        else
+            echo "WARNING: SSH agent forwarding is enabled, but no identities are available."
+        fi
+    else
+        echo "WARNING: SSH_AUTH_SOCK is set but the socket file does not exist."
     fi
 else
-    echo "Could not detect GitHub username. Please set Git user.name and user.email manually."
+    echo "WARNING: SSH agent forwarding is not enabled. You may have issues with Git operations."
 fi
-
-echo
-echo "Please verify your Git commit details:"
-echo "git config --global user.name \"$(git config --global user.name)\""
-echo "git config --global user.email \"$(git config --global user.email)\""
-echo
 
 # Optional setup steps
 if [[ "$AUTO_SETUP" == "true" ]]; then
     echo "Running automatic setup..."
-    make install-deps
-    make generate-json-schema
+    if command -v make &> /dev/null; then
+        make install-deps
+        make generate-json-schema
+    else
+        echo "WARNING: 'make' command not found. Skipping automatic setup."
+    fi
 else
     echo "Automatic setup skipped. Run 'make install-deps' and 'make generate-json-schema' manually if needed."
 fi
 
 echo "Development environment setup complete!"
+
+# If we're not in an interactive shell, keep the container running
+if [[ ! -t 0 ]]; then
+    echo "Container is running in non-interactive mode. Keeping it alive..."
+    tail -f /dev/null
+fi
