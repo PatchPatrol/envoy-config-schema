@@ -26,6 +26,7 @@ RUN dnf update -y && dnf install --allowerasing -y \
     jq \
     wget \
     golang \
+    procps \
     && dnf clean all \
     && rm -rf /var/cache/dnf \
     && rm -rf /tmp/*
