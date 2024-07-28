@@ -5,8 +5,7 @@
     "--env=SSH_AUTH_SOCK=/ssh-agent",
     "--hostname=envoy-config-dev"
   ],
-  "forwardPorts": [],
-  "postCreateCommand": "/home/developer/setup-dev-environment.sh",
+  "overrideCommand": false,
   "remoteUser": "developer",
   "remoteEnv": {
     "SSH_AUTH_SOCK": "/ssh-agent",
@@ -30,5 +29,6 @@
         "ms-azuretools.vscode-docker"
       ]
     }
-  }
+  },
+  "postCreateCommand": "/home/developer/setup-dev-environment.sh"
 }

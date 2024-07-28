@@ -1,6 +1,25 @@
 #!/bin/bash
 set -e
 
+echo "Starting setup-dev-environment.sh"
+
+# Function to safely find executables
+find_executable() {
+    if command -v which >/dev/null 2>&1; then
+        which "$1" 2>/dev/null || echo "$1 not found"
+    else
+        command -v "$1" 2>/dev/null || echo "$1 not found"
+    fi
+}
+
+# Debugging information
+echo "Current user: $(whoami)"
+echo "Current directory: $(pwd)"
+echo "Current PATH: $PATH"
+echo "Current SHELL: $SHELL"
+echo "ZSH location: $(find_executable zsh)"
+echo "BASH location: $(find_executable bash)"
+
 # Determine the actual mount point
 if [ -d "/IdeaProjects" ]; then
     ACTUAL_MOUNT=$(find /IdeaProjects -maxdepth 1 -type d | tail -n 1)
@@ -98,8 +117,7 @@ fi
 
 echo "Development environment setup complete!"
 
-# If we're not in an interactive shell, keep the container running
-if [[ ! -t 0 ]]; then
-    echo "Container is running in non-interactive mode. Keeping it alive..."
-    tail -f /dev/null
-fi
+echo "Setup complete. Final environment:"
+echo "PATH: $PATH"
+echo "SHELL: $SHELL"
+echo "Current directory: $(pwd)"

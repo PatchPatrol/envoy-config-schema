@@ -28,6 +28,7 @@ RUN dnf update -y && dnf install --allowerasing -y \
     golang \
     procps \
     zsh \
+    which \
     && dnf clean all \
     && rm -rf /var/cache/dnf \
     && rm -rf /tmp/*
@@ -93,9 +94,6 @@ COPY --chown=developer:developer setup-dev-environment.sh /home/developer/
 
 # Ensure script is executable
 RUN sudo chmod +x /home/developer/setup-dev-environment.sh
-
-# Set the entrypoint
-ENTRYPOINT ["/home/developer/setup-dev-environment.sh"]
 
 # Set the default command
 CMD ["/bin/bash"]
