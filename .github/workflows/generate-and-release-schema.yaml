@@ -1,0 +1,55 @@
+name: Generate and Release JSON Schema
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  CI_IMAGE_NAME: ${{ github.repository }}-ci
+
+jobs:
+  generate-and-release-schema:
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ env.REGISTRY }}/${{ env.CI_IMAGE_NAME }}:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Generate JSON Schema
+        run: make generate-json-schema
+
+      - name: Create Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: schema-v${{ github.run_number }}
+          release_name: JSON Schema Release ${{ github.run_number }}
+          draft: false
+          prerelease: false
+
+      - name: Zip Schema Files
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: zip -r schema.zip build/
+
+      - name: Upload Release Asset
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./schema.zip
+          asset_name: schema.zip
+          asset_content_type: application/zip

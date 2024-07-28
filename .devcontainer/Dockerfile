@@ -47,10 +47,10 @@ RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.19.4/p
 FROM base AS final
 
 # Copy protobuf from the protobuf-builder stage
-COPY --from=protobuf-builder /usr/local/bin/protoc /usr/local/bin/
-COPY --from=protobuf-builder /usr/local/include/google /usr/local/include/google
-COPY --from=protobuf-builder /usr/local/lib/libprotoc.so* /usr/local/lib/
-COPY --from=protobuf-builder /usr/local/lib/libprotobuf.so* /usr/local/lib/
+COPY --from=ghcr.io/patchpatrol/envoy-config-schema-protobuf:latest /usr/local/bin/protoc /usr/local/bin/
+COPY --from=ghcr.io/patchpatrol/envoy-config-schema-protobuf:latest /usr/local/include/google /usr/local/include/google
+COPY --from=ghcr.io/patchpatrol/envoy-config-schema-protobuf:latest /usr/local/lib/libprotoc.so* /usr/local/lib/
+COPY --from=ghcr.io/patchpatrol/envoy-config-schema-protobuf:latest /usr/local/lib/libprotobuf.so* /usr/local/lib/
 
 # Set up non-root user
 RUN useradd -m -s /bin/bash -G wheel developer && \
