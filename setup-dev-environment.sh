@@ -72,6 +72,17 @@ else
     echo "WARNING: SSH agent forwarding is not enabled. You may have issues with Git operations."
 fi
 
+# Setup shell environment
+if [[ "$SETUP_ZSH" == "true" || "$SHELL" == *"zsh"* ]]; then
+    echo "Setting up Zsh environment..."
+    make -C "$PROJECT_ROOT" -f "$PROJECT_ROOT/Makefile" devshell-zsh
+    echo "Zsh setup complete. Please restart your shell or run 'zsh' to start using it."
+else
+    # Setup colored bash prompt
+    echo "Setting up colored Bash prompt..."
+    echo 'export PS1="\[\033[38;5;11m\]\u\[$(tput sgr0)\]\[\033[38;5;15m\]@\h:\[$(tput sgr0)\]\[\033[38;5;6m\][\w]:\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]"' >> "$HOME/.bashrc"
+fi
+
 # Optional setup steps
 if [[ "$AUTO_SETUP" == "true" ]]; then
     echo "Running automatic setup..."

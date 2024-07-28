@@ -11,7 +11,9 @@
   "remoteEnv": {
     "SSH_AUTH_SOCK": "/ssh-agent",
     "AUTO_SETUP": "false",
-    "PROJECT_ROOT": "/home/developer/Developer/src/envoy-config-schema"
+    "PROJECT_ROOT": "/home/developer/Developer/src/envoy-config-schema",
+    "SETUP_ZSH": "false",
+    "SHELL": "${localEnv:SHELL}"
   },
   "mounts": [
     "source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent,type=bind,consistency=cached"
