@@ -88,7 +88,7 @@ RUN mkdir -p ~/.ssh && \
     ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 # Copy setup script
-COPY --chown=developer:developer setup-dev-environment.sh /home/developer/
+COPY --chown=developer:developer ../setup-dev-environment.sh /home/developer/
 
 # Ensure script is executable
 RUN sudo chmod +x /home/developer/setup-dev-environment.sh
