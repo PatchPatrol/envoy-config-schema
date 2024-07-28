@@ -2,7 +2,7 @@
   "name": "Envoy Config Schema Dev Container",
   "overrideCommand": false,
   "build": {
-    "dockerfile": ".devcontainer/Dockerfile",
+    "dockerfile": "Dockerfile",
     "context": ".."
   },  "runArgs": [
     "--env=SSH_AUTH_SOCK=/ssh-agent"
