@@ -1,6 +1,6 @@
 {
   "name": "Envoy Config Schema Dev Container",
-  overrideCommand: false,
+  "overrideCommand": false,
   "build": {
     "dockerfile": "Dockerfile",
     "context": ".."
@@ -9,19 +9,11 @@
     "--env=SSH_AUTH_SOCK=/ssh-agent"
   ],
   "forwardPorts": [],
-  "postCreateCommand": "git config --global --add safe.directory /workspaces/envoy-config-schema && make install-deps && make generate-json-schema",
-  "remoteUser": "root",
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "golang.go",
-        "zxh404.vscode-proto3",
-        "ms-azuretools.vscode-docker"
-      ]
-    }
-  },
+  "postCreateCommand": "./setup-dev-environment.sh",
+  "remoteUser": "developer",
   "remoteEnv": {
-    "SSH_AUTH_SOCK": "/ssh-agent"
+    "SSH_AUTH_SOCK": "/ssh-agent",
+    "AUTO_SETUP": "false"
   },
   "mounts": [
     "source=${localEnv:SSH_AUTH_SOCK},target=/ssh-agent,type=bind,consistency=cached"

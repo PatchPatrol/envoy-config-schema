@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set up the PATH
-export PATH="/go/bin:/usr/local/go/bin:${PATH}"
+export PATH="/home/developer/.pyenv/bin:/home/developer/.local/bin:/home/developer/.nvm/versions/node/$(nvm current)/bin:/usr/local/go/bin:$PATH"
 
 # MOTD Banner
 echo "Welcome to the Envoy Config Schema Dev Container!"
