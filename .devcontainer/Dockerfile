@@ -1,17 +1,14 @@
-# Start with Rocky Linux as the base image
-FROM rockylinux:9.3
+# Base stage with common tools
+FROM rockylinux:9.3 AS base
 
-# Labels
 LABEL maintainer="Patch Patrol Authors <info@margin.re>"
 LABEL org.opencontainers.image.source="https://github.com/PatchPatrol/envoy-config-schema"
 LABEL version="1.0"
 LABEL description="Development environment for Envoy Config Schema"
 
-# Install necessary tools
-RUN dnf update -y && dnf install -y \
+RUN dnf update -y && dnf install --allowerasing -y \
     git \
     make \
-    protobuf-compiler \
     openssh-clients \
     gcc \
     gcc-c++ \
@@ -27,9 +24,33 @@ RUN dnf update -y && dnf install -y \
     sudo \
     tree \
     jq \
+    wget \
+    golang \
     && dnf clean all \
     && rm -rf /var/cache/dnf \
     && rm -rf /tmp/*
+
+# Protobuf stage
+FROM base AS protobuf-builder
+
+RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.19.4/protobuf-all-3.19.4.tar.gz && \
+    tar -xzvf protobuf-all-3.19.4.tar.gz && \
+    cd protobuf-3.19.4 && \
+    ./configure && \
+    make && \
+    make install && \
+    ldconfig && \
+    cd .. && \
+    rm -rf protobuf-3.19.4 protobuf-all-3.19.4.tar.gz
+
+# Final stage
+FROM base AS final
+
+# Copy protobuf from the protobuf-builder stage
+COPY --from=protobuf-builder /usr/local/bin/protoc /usr/local/bin/
+COPY --from=protobuf-builder /usr/local/include/google /usr/local/include/google
+COPY --from=protobuf-builder /usr/local/lib/libprotoc.so* /usr/local/lib/
+COPY --from=protobuf-builder /usr/local/lib/libprotobuf.so* /usr/local/lib/
 
 # Set up non-root user
 RUN useradd -m -s /bin/bash -G wheel developer && \
@@ -61,11 +82,9 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | b
     nvm install --lts && \
     nvm use --lts
 
-# Install Go (cross-platform)
-ENV GOROOT=/usr/local/go
+# Set up Go environment
 ENV PATH=$PATH:/usr/local/go/bin
-ENV GOPATH=/home/developer/go
-RUN curl -sSL https://golang.org/dl/go1.21.6.linux-$(dpkg --print-architecture).tar.gz | sudo tar -C /usr/local -xzf -
+ENV PATH=$PATH:/usr/bin:/home/developer/go/bin
 
 # Install Go tools
 RUN go install github.com/chrusty/protoc-gen-jsonschema/cmd/protoc-gen-jsonschema@latest && \
