@@ -1,12 +1,14 @@
 {
   "name": "Envoy Config Schema Dev Container",
   "overrideCommand": false,
-  "image": "ghcr.io/patchpatrol/envoy-config-schema:latest",
-  "runArgs": [
+  "build": {
+    "dockerfile": ".devcontainer/Dockerfile",
+    "context": ".."
+  },  "runArgs": [
     "--env=SSH_AUTH_SOCK=/ssh-agent"
   ],
   "forwardPorts": [],
-  "postCreateCommand": "./setup-dev-environment.sh",
+  "postCreateCommand": "/home/developer/setup-dev-environment.sh",
   "remoteUser": "developer",
   "remoteEnv": {
     "SSH_AUTH_SOCK": "/ssh-agent",
