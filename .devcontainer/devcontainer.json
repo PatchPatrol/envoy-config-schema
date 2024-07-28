@@ -1,7 +1,7 @@
 {
   "name": "Envoy Config Schema Dev Container",
   "overrideCommand": false,
-  "image": "ghcr.io/patchpatrol/envoy-config-schema:main",
+  "image": "ghcr.io/patchpatrol/envoy-config-schema:latest",
   "runArgs": [
     "--env=SSH_AUTH_SOCK=/ssh-agent"
   ],

@@ -19,10 +19,6 @@ jobs:
       contents: read
       packages: write
 
-    strategy:
-      matrix:
-        platform: [linux/amd64, linux/arm64]
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -46,7 +42,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,prefix=,suffix=,format=short
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
@@ -60,7 +57,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          platforms: ${{ matrix.platform }}
+          platforms: linux/amd64,linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -69,5 +66,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          IMAGE_DIGEST=$(docker inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }} --format='{{index .RepoDigests 0}}' | cut -d'@' -f2)
+          IMAGE_DIGEST=$(docker buildx imagetools inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }} --raw)
           gh release edit ${{ github.ref_name }} --notes-file <(echo -e "Docker image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}\nDigest: $IMAGE_DIGEST")
