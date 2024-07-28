@@ -1,2 +1,5 @@
 build/**
 .idea
+
+__pycache__/
+*.pyc

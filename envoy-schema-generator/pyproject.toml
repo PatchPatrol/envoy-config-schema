@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "envoy-schema-generator"
+version = "0.1.0"
+description = ""
+authors = ["Lucien Brule <lucien@lucienbrule.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+click = "^8.1.7"
+requests = "^2.32.3"
+gitpython = "^3.1.43"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
