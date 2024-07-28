@@ -1,14 +1,28 @@
 #!/bin/bash
 set -e
 
-# Check if we're in a dev container environment
-if [ -d "/workspaces/envoy-config-schema" ]; then
-    # Ensure correct ownership and Git safe directory
-    sudo chown developer:developer /workspaces/envoy-config-schema
-    git config --global --add safe.directory /workspaces/envoy-config-schema
+# Determine the actual mount point
+if [ -d "/IdeaProjects" ]; then
+    ACTUAL_MOUNT=$(find /IdeaProjects -maxdepth 1 -type d | tail -n 1)
+elif [ -d "/workspaces" ]; then
+    ACTUAL_MOUNT="/workspaces/envoy-config-schema"
 else
-    echo "Not running in a standard dev container environment. Skipping workspace setup."
+    echo "Unable to determine the project mount point."
+    exit 1
 fi
+
+# Create the desired directory structure
+mkdir -p /home/developer/Developer/src
+
+# Create a symbolic link
+ln -sfn "$ACTUAL_MOUNT" /home/developer/Developer/src/envoy-config-schema
+
+# Set the PROJECT_ROOT
+export PROJECT_ROOT="/home/developer/Developer/src/envoy-config-schema"
+
+# Ensure correct ownership and Git safe directory
+sudo chown -R developer:developer "$PROJECT_ROOT"
+git config --global --add safe.directory "$PROJECT_ROOT"
 
 # Function to extract GitHub username
 get_github_username() {
@@ -62,8 +76,8 @@ fi
 if [[ "$AUTO_SETUP" == "true" ]]; then
     echo "Running automatic setup..."
     if command -v make &> /dev/null; then
-        make install-deps
-        make generate-json-schema
+        make -C "$PROJECT_ROOT" install-deps
+        make -C "$PROJECT_ROOT" generate-json-schema
     else
         echo "WARNING: 'make' command not found. Skipping automatic setup."
     fi
