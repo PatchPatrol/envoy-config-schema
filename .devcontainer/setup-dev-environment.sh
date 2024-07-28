@@ -1,9 +1,35 @@
 #!/bin/bash
 set -e
 
+# MOTD Banner
+echo "Welcome to the Envoy Config Schema Dev Container!"
+echo "================================================"
+echo
+
 # Ensure correct ownership and Git safe directory
 sudo chown developer:developer /workspaces/envoy-config-schema
 git config --global --add safe.directory /workspaces/envoy-config-schema
+
+# Check SSH agent forwarding
+if [ -n "$SSH_AUTH_SOCK" ]; then
+    echo "SSH agent forwarding is enabled."
+    # Verify if the socket actually exists
+    if [ -e "$SSH_AUTH_SOCK" ]; then
+        echo "SSH_AUTH_SOCK is valid."
+        # Try to list keys to verify forwarding is working
+        if ssh-add -l &>/dev/null; then
+            echo "SSH agent forwarding is working correctly."
+        else
+            echo "WARNING: SSH agent forwarding is enabled, but no identities are available."
+        fi
+    else
+        echo "WARNING: SSH_AUTH_SOCK is set but the socket file does not exist."
+    fi
+else
+    echo "WARNING: SSH agent forwarding is not enabled. You may have issues with Git operations."
+fi
+
+echo
 
 # Function to extract GitHub username
 get_github_username() {
@@ -35,6 +61,12 @@ if [ -n "$GITHUB_USERNAME" ]; then
 else
     echo "Could not detect GitHub username. Please set Git user.name and user.email manually."
 fi
+
+echo
+echo "Please verify your Git commit details:"
+echo "git config --global user.name \"$(git config --global user.name)\""
+echo "git config --global user.email \"$(git config --global user.email)\""
+echo
 
 # Optional setup steps
 if [[ "$AUTO_SETUP" == "true" ]]; then

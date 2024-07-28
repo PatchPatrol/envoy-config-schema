@@ -31,23 +31,10 @@ RUN dnf update -y && dnf install --allowerasing -y \
     && rm -rf /var/cache/dnf \
     && rm -rf /tmp/*
 
-# Protobuf stage
-FROM base AS protobuf-builder
-
-RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.19.4/protobuf-all-3.19.4.tar.gz && \
-    tar -xzvf protobuf-all-3.19.4.tar.gz && \
-    cd protobuf-3.19.4 && \
-    ./configure && \
-    make && \
-    make install && \
-    ldconfig && \
-    cd .. && \
-    rm -rf protobuf-3.19.4 protobuf-all-3.19.4.tar.gz
-
 # Final stage
 FROM base AS final
 
-# Copy protobuf from the protobuf-builder stage
+# Copy protobuf from the protobuf image
 COPY --from=ghcr.io/patchpatrol/envoy-config-schema-protobuf:latest /usr/local/bin/protoc /usr/local/bin/
 COPY --from=ghcr.io/patchpatrol/envoy-config-schema-protobuf:latest /usr/local/include/google /usr/local/include/google
 COPY --from=ghcr.io/patchpatrol/envoy-config-schema-protobuf:latest /usr/local/lib/libprotoc.so* /usr/local/lib/
@@ -100,16 +87,14 @@ RUN mkdir -p ~/.ssh && \
     chmod 700 ~/.ssh && \
     ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-# Copy entrypoint script
-COPY --chown=developer:developer .devcontainer/entrypoint.dev.sh /usr/local/bin/entrypoint.dev.sh
-RUN sudo chmod +x /usr/local/bin/entrypoint.dev.sh
-
 # Copy setup script
-COPY --chown=developer:developer setup-dev-environment.sh /workspace/
-RUN chmod +x /workspace/setup-dev-environment.sh
+COPY --chown=developer:developer setup-dev-environment.sh /home/developer/
+
+# Ensure script is executable
+RUN sudo chmod +x /home/developer/setup-dev-environment.sh
 
 # Set the entrypoint
-ENTRYPOINT ["/usr/local/bin/entrypoint.dev.sh"]
+ENTRYPOINT ["/home/developer/setup-dev-environment.sh"]
 
 # Set the default command
 CMD ["/bin/bash"]
