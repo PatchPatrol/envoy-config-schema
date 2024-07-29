@@ -34,6 +34,7 @@ RUN dnf install -y epel-release && \
     autojump \
     autojump-zsh \
     util-linux-user \
+    file \
     && dnf clean all \
     && rm -rf /var/cache/dnf \
     && rm -rf /tmp/*
@@ -69,9 +70,9 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | b
     nvm use --lts
 
 # Install Go tools
-RUN go install github.com/chrusty/protoc-gen-jsonschema/cmd/protoc-gen-jsonschema@v1.3.5 && \
-    go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.26 && \
-    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1
+RUN go install github.com/chrusty/protoc-gen-jsonschema/cmd/protoc-gen-jsonschema@1.3.5 &&\
+    	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.26 &&\
+    	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1
 
 
 # Install tre
@@ -84,7 +85,12 @@ COPY --from=ghcr.io/patchpatrol/envoy-config-schema-protobuf:latest /usr/local/l
 COPY --from=ghcr.io/patchpatrol/envoy-config-schema-protobuf:latest /usr/local/lib/libprotobuf.so* /usr/local/lib/
 
 # Set up git to use the forwarded SSH agent
-RUN git config --global url."git@github.com:".insteadOf "https://github.com/"
+RUN if ssh-add -l &>/dev/null; then \
+        echo "SSH agent forwarded successfully. Configuring git to use SSH." && \
+        git config --global url."git@github.com:".insteadOf "https://github.com/"; \
+    else \
+        echo "SSH agent not forwarded. Using HTTPS for git."; \
+    fi
 
 # Set up SSH for the forwarded agent
 RUN mkdir -p ~/.ssh && \

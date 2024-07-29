@@ -58,8 +58,9 @@ if [ -d "/IdeaProjects" ]; then
 elif [ -d "/workspaces" ]; then
     ACTUAL_MOUNT="/workspaces/envoy-config-schema"
 else
-    echo "Unable to determine the project mount point."
-    exit 1
+    ACTUAL_MOUNT="/tmp/dummy-project-root"
+    mkdir -p "$ACTUAL_MOUNT"
+    echo "Created dummy project root at $ACTUAL_MOUNT"
 fi
 
 # Create the desired directory structure

@@ -4,7 +4,7 @@ compinit
 
 export ANTIDOTE_HOME="${HOME}/.antidote"
 # Load Antidote
-source ${ANTIDOTE_HOME}/.antidote/antidote.zsh
+source ${ANTIDOTE_HOME}/antidote.zsh
 
 # Initialize Antidote
 antidote load
