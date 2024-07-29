@@ -91,7 +91,7 @@ RUN mkdir -p ~/.ssh && \
     ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 # Copy dotfiles
-COPY --chown developer:developer dotfiles /home/developer/
+COPY --chown=developer:developer dotfiles /home/developer/
 
 # Copy setup script
 COPY --chown=developer:developer setup-dev-environment.sh /home/developer/
