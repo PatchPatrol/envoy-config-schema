@@ -29,7 +29,7 @@ RUN dnf update -y && dnf install --allowerasing -y \
     procps \
     zsh \
     which \
-    autojump-zsh \
+    autojump \
     && dnf clean all \
     && rm -rf /var/cache/dnf \
     && rm -rf /tmp/*
