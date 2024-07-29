@@ -69,9 +69,10 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | b
     nvm use --lts
 
 # Install Go tools
-RUN go install github.com/chrusty/protoc-gen-jsonschema/cmd/protoc-gen-jsonschema@latest && \
-    go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && \
-    go install -mod=mod  google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+RUN go install github.com/chrusty/protoc-gen-jsonschema/cmd/protoc-gen-jsonschema@v1.3.5 && \
+    go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.26 && \
+    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1
+
 
 # Install tre
 #COPY --from=ghcr.io/patchpatrol/envoy-config-schema-tre:latest /tre /usr/local/bin/tre
