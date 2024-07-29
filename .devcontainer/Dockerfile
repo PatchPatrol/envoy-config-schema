@@ -71,7 +71,7 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | b
 # Install Go tools
 RUN go install github.com/chrusty/protoc-gen-jsonschema/cmd/protoc-gen-jsonschema@latest && \
     go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && \
-    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.20.0
+    go install -mod=mod  google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
 # Install tre
 #COPY --from=ghcr.io/patchpatrol/envoy-config-schema-tre:latest /tre /usr/local/bin/tre
