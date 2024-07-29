@@ -6,7 +6,9 @@ LABEL org.opencontainers.image.source="https://github.com/PatchPatrol/envoy-conf
 LABEL version="1.0"
 LABEL description="Development environment for Envoy Config Schema"
 
-RUN dnf update -y && dnf install --allowerasing -y \
+RUN dnf install -y epel-release && \
+    dnf update -y && \
+    dnf install --allowerasing -y \
     git \
     make \
     openssh-clients \
