@@ -29,6 +29,7 @@ RUN dnf update -y && dnf install --allowerasing -y \
     procps \
     zsh \
     which \
+    autojump-zsh \
     && dnf clean all \
     && rm -rf /var/cache/dnf \
     && rm -rf /tmp/*
@@ -89,11 +90,16 @@ RUN mkdir -p ~/.ssh && \
     chmod 700 ~/.ssh && \
     ssh-keyscan github.com >> ~/.ssh/known_hosts
 
+# Copy dotfiles
+COPY --chown developer:developer dotfiles /home/developer/
+
 # Copy setup script
 COPY --chown=developer:developer setup-dev-environment.sh /home/developer/
 
 # Ensure script is executable
 RUN sudo chmod +x /home/developer/setup-dev-environment.sh
+
+SHELL ["/bin/zsh", "-c"]
 
 # Set the default command
 CMD ["/bin/bash"]

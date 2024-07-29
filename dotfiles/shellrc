@@ -1,0 +1,27 @@
+# Shared configuration for both Bash and Zsh
+
+# Common environment variables
+export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+export NVM_DIR="$HOME/.nvm"
+
+# PyEnv initialization
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+  eval "$(pyenv virtualenv-init -)"
+fi
+
+# NVM initialization
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# Zoxide initialization
+if command -v zoxide 1>/dev/null 2>&1; then
+  eval "$(zoxide init bash)"
+fi
+
+# Common aliases
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'

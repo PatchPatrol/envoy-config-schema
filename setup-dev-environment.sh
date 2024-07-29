@@ -3,6 +3,31 @@ set -e
 
 echo "Starting setup-dev-environment.sh"
 
+echo "Setting up development environment..."
+
+# Ensure the dotfiles directory exists and has correct ownership
+sudo mkdir -p /home/developer/dotfiles
+sudo chown -R developer:developer /home/developer/dotfiles
+
+# Ensure autojump data directory exists
+mkdir -p ~/.local/share/autojump
+
+# Set up symbolic links for dotfiles
+ln -sf /home/developer/dotfiles/shellrc /home/developer/.shellrc
+ln -sf /home/developer/dotfiles/bashrc /home/developer/.bashrc
+ln -sf /home/developer/dotfiles/zshrc /home/developer/.zshrc
+ln -sf /home/developer/dotfiles/p10k.zsh /home/developer/.p10k.zsh
+ln -sf /home/developer/dotfiles/zsh_plugins.txt /home/developer/.zsh_plugins.txt
+
+# Install Antidote
+git clone --depth=1 https://github.com/mattmc3/antidote.git ${HOME}/.antidote
+
+# Install additional tools (e.g., zoxide)
+curl -sS https://webinstall.dev/zoxide | bash
+
+# Set Zsh as the default shell
+sudo chsh -s $(which zsh) developer
+
 # Function to safely find executables
 find_executable() {
     if command -v which >/dev/null 2>&1; then
@@ -42,6 +67,8 @@ export PROJECT_ROOT="/home/developer/Developer/src/envoy-config-schema"
 # Ensure correct ownership and Git safe directory
 sudo chown -R developer:developer "$PROJECT_ROOT"
 git config --global --add safe.directory "$PROJECT_ROOT"
+git config --global --add safe.directory /IdeaProjects/envoy-config-schema
+
 
 # Function to extract GitHub username
 get_github_username() {
@@ -89,17 +116,6 @@ if [ -n "$SSH_AUTH_SOCK" ]; then
     fi
 else
     echo "WARNING: SSH agent forwarding is not enabled. You may have issues with Git operations."
-fi
-
-# Setup shell environment
-if [[ "$SETUP_ZSH" == "true" || "$SHELL" == *"zsh"* ]]; then
-    echo "Setting up Zsh environment..."
-    make -C "$PROJECT_ROOT" -f "$PROJECT_ROOT/Makefile" devshell-zsh
-    echo "Zsh setup complete. Please restart your shell or run 'zsh' to start using it."
-else
-    # Setup colored bash prompt
-    echo "Setting up colored Bash prompt..."
-    echo 'export PS1="\[\033[38;5;11m\]\u\[$(tput sgr0)\]\[\033[38;5;15m\]@\h:\[$(tput sgr0)\]\[\033[38;5;6m\][\w]:\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]"' >> "$HOME/.bashrc"
 fi
 
 # Optional setup steps
