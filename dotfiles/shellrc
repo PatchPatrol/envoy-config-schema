@@ -20,8 +20,3 @@ fi
 if command -v zoxide 1>/dev/null 2>&1; then
   eval "$(zoxide init bash)"
 fi
-
-# Common aliases
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'

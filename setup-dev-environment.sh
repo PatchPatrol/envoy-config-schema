@@ -5,16 +5,16 @@ echo "Starting setup-dev-environment.sh"
 
 echo "Setting up development environment..."
 
+# Ensure correct ownership of the IntelliJ Projects directory
+if [ -d "/IdeaProjects" ]; then
+    sudo chown -R developer:developer /IdeaProjects
+    echo "Ownership of /IdeaProjects changed to developer:developer"
+fi
+
+
 # Ensure the dotfiles directory exists and has correct ownership
 sudo mkdir -p /home/developer/dotfiles
 sudo chown -R developer:developer /home/developer/dotfiles
-
-# Set up symbolic links for dotfiles
-ln -sf /home/developer/dotfiles/bashrc /home/developer/.bashrc
-ln -sf /home/developer/dotfiles/zshrc /home/developer/.zshrc
-ln -sf /home/developer/dotfiles/p10k.zsh /home/developer/.p10k.zsh
-ln -sf /home/developer/dotfiles/shellrc /home/developer/.shellrc
-ln -sf /home/developer/dotfiles/zsh_plugins.txt /home/developer/.zsh_plugins.txt
 
 # Install Antidote if not already installed
 if [ ! -d "${HOME}/.antidote" ]; then
@@ -25,7 +25,15 @@ fi
 curl -sS https://webinstall.dev/zoxide | bash
 
 # Set Zsh as the default shell
-sudo chsh -s $(which zsh) developer
+if ! grep -q "zoxide init zsh" ~/.zshrc; then
+    echo 'eval "$(zoxide init zsh)"' >> ~/.zshrc
+fi
+
+# Change default shell to Zsh
+if [ "$SHELL" != "/bin/zsh" ]; then
+    sudo chsh -s /bin/zsh developer
+    echo "Default shell changed to Zsh. Please log out and log back in for the change to take effect."
+fi
 
 # Function to safely find executables
 find_executable() {
@@ -67,7 +75,6 @@ export PROJECT_ROOT="/home/developer/Developer/src/envoy-config-schema"
 sudo chown -R developer:developer "$PROJECT_ROOT"
 git config --global --add safe.directory "$PROJECT_ROOT"
 git config --global --add safe.directory /IdeaProjects/envoy-config-schema
-
 
 # Function to extract GitHub username
 get_github_username() {
@@ -136,3 +143,6 @@ echo "Setup complete. Final environment:"
 echo "PATH: $PATH"
 echo "SHELL: $SHELL"
 echo "Current directory: $(pwd)"
+
+# Execute the CMD
+exec "$@"

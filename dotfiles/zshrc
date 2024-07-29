@@ -1,8 +1,13 @@
+# Initialize Zsh completion system
+autoload -Uz compinit
+compinit
+
+export ANTIDOTE_HOME="${HOME}/.antidote"
 # Load Antidote
-source ${HOME}/.antidote/antidote.zsh
+source ${ANTIDOTE_HOME}/.antidote/antidote.zsh
 
 # Initialize Antidote
-antidote load ${HOME}/.zsh_plugins.txt
+antidote load
 
 # Load Powerlevel10k
 if [[ -f ${HOME}/.antidote/powerlevel10k/powerlevel10k.zsh-theme ]]; then
@@ -11,11 +16,11 @@ elif [[ -f ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k/powerleve
     source ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k/powerlevel10k.zsh-theme
 fi
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
 # Source shared configuration
 [[ -f ~/.shellrc ]] && source ~/.shellrc
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # Autojump
 [[ -s /usr/share/autojump/autojump.zsh ]] && source /usr/share/autojump/autojump.zsh
