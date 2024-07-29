@@ -2,10 +2,14 @@
 source ${HOME}/.antidote/antidote.zsh
 
 # Initialize Antidote
-antidote load
+antidote load ${HOME}/.zsh_plugins.txt
 
 # Load Powerlevel10k
-source ${HOME}/.antidote/powerlevel10k/powerlevel10k.zsh-theme
+if [[ -f ${HOME}/.antidote/powerlevel10k/powerlevel10k.zsh-theme ]]; then
+    source ${HOME}/.antidote/powerlevel10k/powerlevel10k.zsh-theme
+elif [[ -f ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k/powerlevel10k.zsh-theme ]]; then
+    source ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k/powerlevel10k.zsh-theme
+fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

@@ -32,6 +32,8 @@ RUN dnf install -y epel-release && \
     zsh \
     which \
     autojump \
+    autojump-zsh \
+    util-linux-user \
     && dnf clean all \
     && rm -rf /var/cache/dnf \
     && rm -rf /tmp/*
@@ -93,13 +95,13 @@ RUN mkdir -p ~/.ssh && \
     ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 # Copy dotfiles
-COPY --chown=developer:developer dotfiles /home/developer/
+COPY dotfiles /home/developer/dotfiles
+RUN chown -R developer:developer /home/developer/dotfiles
 
 # Copy setup script
-COPY --chown=developer:developer setup-dev-environment.sh /home/developer/
-
-# Ensure script is executable
-RUN sudo chmod +x /home/developer/setup-dev-environment.sh
+COPY setup-dev-environment.sh /home/developer/
+RUN chown developer:developer /home/developer/setup-dev-environment.sh && \
+    chmod +x /home/developer/setup-dev-environment.sh
 
 SHELL ["/bin/zsh", "-c"]
 

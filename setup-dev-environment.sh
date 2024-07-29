@@ -9,18 +9,17 @@ echo "Setting up development environment..."
 sudo mkdir -p /home/developer/dotfiles
 sudo chown -R developer:developer /home/developer/dotfiles
 
-# Ensure autojump data directory exists
-mkdir -p ~/.local/share/autojump
-
 # Set up symbolic links for dotfiles
-ln -sf /home/developer/dotfiles/shellrc /home/developer/.shellrc
 ln -sf /home/developer/dotfiles/bashrc /home/developer/.bashrc
 ln -sf /home/developer/dotfiles/zshrc /home/developer/.zshrc
 ln -sf /home/developer/dotfiles/p10k.zsh /home/developer/.p10k.zsh
+ln -sf /home/developer/dotfiles/shellrc /home/developer/.shellrc
 ln -sf /home/developer/dotfiles/zsh_plugins.txt /home/developer/.zsh_plugins.txt
 
-# Install Antidote
-git clone --depth=1 https://github.com/mattmc3/antidote.git ${HOME}/.antidote
+# Install Antidote if not already installed
+if [ ! -d "${HOME}/.antidote" ]; then
+    git clone --depth=1 https://github.com/mattmc3/antidote.git ${HOME}/.antidote
+fi
 
 # Install additional tools (e.g., zoxide)
 curl -sS https://webinstall.dev/zoxide | bash
